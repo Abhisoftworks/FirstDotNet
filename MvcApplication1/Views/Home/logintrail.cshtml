@@ -1,15 +1,14 @@
 ﻿@{
     ViewBag.Title = "logintrail";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
 
-    $(document).ready(function () {
-       // alert('Hello');
-    });
+    $(document).ready(function () { });
     function save() {
-        debugger
+        
         var name = document.getElementById("inputname").value;
         var id = document.getElementById("inputID").value;
         var date = document.getElementById("inputDate").value;
@@ -22,13 +21,10 @@
         else {
             gender_value = 'Female';
         }
-        //} if (gender == 'Female') {
-        //    gender_value = 'Female';
-
-        //}
-        alert(name + "  " + id + "  " + date + "  " + gender_value);
-        //console.log(name + id + date + gender);
-
+      
+       
+        //alert(name + "  " + id + "  " + date + "  " + gender_value);
+     
         $.ajax({
             url: "../Home/save",
             data: '{name:"' + name + '",id:"' + id + '",date:"' + date + '",gender:"' + gender + '"}',
@@ -44,12 +40,91 @@
             }
         });
     }
+
+    function GetDetails() {
+        debugger
+        $.ajax({
+            url: "../Home/GetDetails",           
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+               
+                $('#tbldata').empty();
+                var obj = JSON.stringify(result);
+                var str = $.parseJSON(obj);
+
+                for (i = 0; i < str.length; i++) {
+                    if (str[i]["gender"] == 'false') {
+                        var f = 'female';
+                    }
+                    if (str[i]["gender"] == 'true') {
+                        var f = 'male';
+                    }
+                    $('#tbldata').append(" <tr><th style ='text-align:center'>" + str[i]["id"] +
+                        "</th><th style ='text-align:center'>" + str[i]["name"] +
+                        "</th><th style ='text-align:center'>" + f +
+                        "</th><th style ='text-align:center' >" + str[i]["Date1"] +
+                        "</th><th style ='text-align:center'><i onclick='editDetails(" + str[i]["id"] + ")' class='fa-solid fa-pen'></i></th><th style ='text-align:center'><i onclick='deleteDetails(" + str[i]["id"] + ")' class='fa-solid fa-trash'></i></th></tr>");
+              
+                }
+         },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+    function editDetails(id) {
+debugger
+        $.ajax({ 
+            url: "../Home/editDetails",
+            data: '{id:"' + id + '"}',
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                var obj = JSON.stringify(result);
+                var str = $.parseJSON(obj);
+                $('#inputname').val(str[0]["name"]);
+                $('#inputID').val(str[0]["id"]);
+                $('#gender').val(str[0]["gender"]);
+                $('#inputDate').val(str[0]["date"]);
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+    function update() {
+        //
+    }
+
+
+    function deleteDetails(id){
+        //
+       
+        $.ajax({
+            url: "../Home/deleteDetails",
+            data: '{id:"' + id + '"}',
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                GetDetails();
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
 </script>
 
 
 
 <h2>logintrail</h2>
-<form>
+<div>
     <div class="form-group row">
         <label for="inputname" class="col-sm-2 col-form-label">Name:</label>
         <div class="col-sm-10">
@@ -99,6 +174,26 @@
         <div class="form-group row">
             <div class="col-sm-10">
                 <button type="submit" class="btn btn-primary" onclick="save()">Submit</button>
+                
             </div>
         </div>
-</form>
+        
+</div>
+
+<button onclick="GetDetails()" style="padding:10px; margin:5px;background-color:greenyellow" >Show Data</button>
+<table style="border:double">
+    <thead>
+        <tr style="border:double; padding:10px; margin:5px">
+    <th style="padding:10px; margin:5px">ID</th>
+    <th  style="padding:10px; margin:5px">Name</th>
+    <th  style="padding:10px; margin:5px">Gander</th>
+    <th  style="padding:10px; margin:5px">Date</th>
+    <th  style="padding:10px; margin:5px">Update</th>
+    <th  style="padding:10px; margin:5px">Delete</th>
+  </tr>
+    </thead>
+    <tbody id="tbldata"></tbody>
+
+  
+ 
+</table>
