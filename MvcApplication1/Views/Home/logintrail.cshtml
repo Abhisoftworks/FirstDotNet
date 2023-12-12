@@ -78,6 +78,7 @@
     function editDetails(id) {
         document.getElementById("save").style.display = "none";
         document.getElementById("update").style.display = "block";
+        document.getElementById("inputID").disabled = true;
 
         $.ajax({
             url: "../Home/editDetails",
@@ -147,6 +148,13 @@
             success: function (result) {
                 alert("Update");
                 GetDetails();
+                document.getElementById("save").style.display = "block";
+                document.getElementById("update").style.display = "none";
+                document.getElementById("inputID").disabled = false;
+
+                document.getElementById("inputID").value = "";
+                document.getElementById("inputname").value = "";
+                document.getElementById("inputDate").value = "";
             },
             error: function (errormessage) {
                 alert(errormessage.responseText);
