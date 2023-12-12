@@ -72,5 +72,13 @@ namespace MvcApplication1.Controllers
             List<Dictionary<string, object>> lst = obj.GetTableRows(dt);
             return Json(lst, JsonRequestBehavior.AllowGet);
         }
+
+        public string updatedata(string name, string id, DateTime date, string gender)
+        {
+
+            Detail obj = new Detail();
+            string str = obj.updatedata(name, id, date, gender);
+            return str;
+        }
     }
 }

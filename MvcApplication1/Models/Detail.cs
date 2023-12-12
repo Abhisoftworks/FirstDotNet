@@ -130,7 +130,7 @@ namespace MvcApplication1.Models
             {
                 try
                 {
-                    using (cmd = new SqlCommand("select * from Details where id='" + id + "';", con))
+                    using (cmd = new SqlCommand("select *,CONVERT(varchar,date,23) as Date1 from Details where id='" + id + "';", con))
                     {
                         cmd.CommandType = CommandType.Text;
                         SqlDataAdapter adp = new SqlDataAdapter();
@@ -151,5 +151,35 @@ namespace MvcApplication1.Models
 
             return dt;
         }
+
+        internal string updatedata(string name, string id, DateTime date, string gender)
+        {
+            DataTable dt = new DataTable();
+            SqlCommand cmd;
+            string str = "";
+            using (con = connection.getDetailConnection())
+            {
+                try
+                {
+                    using (cmd = new SqlCommand("UPDATE Details SET name='"+name+"',date='"+date+"',gender='"+gender+"' WHERE id='"+id+"'",con))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        str = cmd.ExecuteNonQuery().ToString();
+                    }
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    con.Close();
+                    con.Dispose();
+                    SqlConnection.ClearAllPools();
+                }
+            }
+
+            return str;
+        }
+
     }
 }
